@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Service — MIRACLE GK</title>
+<meta name="description" content="Custom resin model service — from concept to production. Licensed IP collaboration, professional sculpting team, museum-grade finish. One-stop custom solution.">
+<meta name="keywords" content="custom resin model, OEM resin figure, licensed statue production, custom anime figure, resin model factory">
+
+<meta property="og:title" content="MIRACLE GK — Premium Resin Model Factory">
+<meta property="og:description" content="Custom resin model factory specializing in anime, Marvel, and DC collectible statues. From concept to production.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="images/marvel/ironman-mk50.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* ====== Reset & Base ====== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #000;
+  --bg-card: rgba(255,255,255,0.05);
+  --cyan: #00e0ff;
+  --purple: #a855f7;
+  --gold: #f59e0b;
+  --text: #f5f5f7;
+  --text-dim: #86868b;
+  --border: rgba(255,255,255,0.1);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.47059;
+  font-weight: 400;
+}
+
+/* ====== Nav ====== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  background: rgba(0,0,0,.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand { font-size: 22px; font-weight: 700; color: var(--cyan); letter-spacing: 1px; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: #aaa; text-decoration: none; font-size: 14px; transition: color .2s; }
+.nav-links a:hover { color: var(--cyan); }
+.nav-links a.active { color: var(--cyan); }
+.cn-sub {
+  display: block; font-size: 0.45em; color: #666; font-weight: 400;
+  margin-top: 4px; letter-spacing: 0.05em;
+}
+
+/* ====== Hero ====== */
+.custom-hero {
+  padding-top: 180px; padding-bottom: 100px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(245,158,11,0.06) 0%, transparent 60%);
+}
+.custom-hero h1 {
+  font-size: clamp(3rem, 8vw, 6rem); font-weight: 900;
+  letter-spacing: -0.02em; line-height: 1.05;
+  background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, #fbbf24 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 0.2em;
+}
+.custom-hero p {
+  font-size: 1.15rem; color: var(--text-dim); max-width: 600px; margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ====== Advantage Cards ====== */
+.adv-section {
+  max-width: 1100px; margin: 0 auto; padding: 100px 20px;
+}
+.adv-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px; margin-top: 50px;
+}
+.adv-card {
+  background: var(--bg-card); border-radius: 18px; padding: 36px 28px;
+  border: 1px solid var(--border); backdrop-filter: blur(20px);
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.3s;
+  text-align: center;
+}
+.adv-card:hover {
+  transform: translateY(-6px); border-color: rgba(245,158,11,0.3);
+}
+.adv-icon {
+  font-size: 2.2rem; margin-bottom: 16px; display: block;
+}
+.adv-card h3 {
+  font-size: 1.1rem; font-weight: 600; margin-bottom: 8px;
+  color: #fff;
+}
+.adv-card h3 .cn-sub { font-size: 0.7em; }
+.adv-card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+
+/* ====== Detail Sections ====== */
+.detail-section {
+  max-width: 900px; margin: 0 auto; padding: 80px 20px;
+  border-top: 1px solid var(--border);
+}
+.detail-section h2 {
+  font-size: 2rem; font-weight: 700; margin-bottom: 8px;
+  background: linear-gradient(135deg, #fff, var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.detail-section h2 .cn-sub { font-size: 0.55em; }
+.detail-section .section-desc {
+  font-size: 1rem; color: var(--text-dim); margin-bottom: 32px; line-height: 1.6;
+}
+.detail-section ul {
+  list-style: none; padding: 0;
+}
+.detail-section ul li {
+  padding: 14px 20px; margin-bottom: 10px; border-radius: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  font-size: 0.95rem; color: var(--text); line-height: 1.6;
+}
+.detail-section ul li::before {
+  content: '✦'; color: var(--gold); margin-right: 10px; font-size: 0.8rem;
+}
+.detail-section ul li .cn-sub { display: inline; font-size: 0.85em; color: var(--text-dim); margin-left: 4px; }
+
+/* ====== Timeline / Workflow ====== */
+.workflow-section {
+  max-width: 900px; margin: 0 auto; padding: 80px 20px;
+  border-top: 1px solid var(--border);
+}
+.workflow-section h2 {
+  font-size: 2rem; font-weight: 700; margin-bottom: 8px; text-align: center;
+  background: linear-gradient(135deg, #fff, var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.workflow-section h2 .cn-sub { font-size: 0.55em; }
+.workflow-section .section-desc {
+  font-size: 1rem; color: var(--text-dim); margin-bottom: 50px; line-height: 1.6; text-align: center;
+}
+.timeline {
+  position: relative; padding-left: 40px;
+}
+.timeline::before {
+  content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+  width: 2px; background: linear-gradient(180deg, var(--cyan), var(--purple));
+}
+.tl-step {
+  position: relative; margin-bottom: 48px;
+}
+.tl-step:last-child { margin-bottom: 0; }
+.tl-dot {
+  position: absolute; left: -33px; top: 4px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cyan); border: 3px solid var(--bg-deep);
+  box-shadow: 0 0 12px rgba(0,224,255,0.4);
+}
+.tl-step:nth-child(even) .tl-dot { background: var(--purple); box-shadow: 0 0 12px rgba(168,85,247,0.4); }
+.tl-content {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px 28px;
+  transition: border-color 0.3s;
+}
+.tl-step:hover .tl-content { border-color: rgba(0,224,255,0.25); }
+.tl-content h3 { font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.tl-content h3 .cn-sub { font-size: 0.7em; }
+.tl-content p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+/* ====== CTA ====== */
+.cta-section {
+  text-align: center; padding: 100px 20px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,224,255,0.04) 100%);
+  border-top: 1px solid var(--border);
+}
+.cta-section h2 {
+  font-size: 2.2rem; font-weight: 700; margin-bottom: 12px;
+  color: #fff;
+}
+.cta-section h2 .cn-sub { font-size: 0.55em; }
+.cta-section p { font-size: 1.05rem; color: var(--text-dim); margin-bottom: 36px; }
+.cta-btn {
+  display: inline-block; padding: 16px 48px; border-radius: 30px;
+  font-size: 1.05rem; font-weight: 600; text-decoration: none;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  color: #000; letter-spacing: 0.5px;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 32px rgba(0,224,255,0.18);
+}
+.cta-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 48px rgba(0,224,255,0.28); }
+
+/* ====== Footer ====== */
+.footer {
+  text-align: center; padding: 80px 20px; margin-top: 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim); font-size: 0.85rem;
+}
+.footer-logo {
+  font-size: 1.2rem; font-weight: 700; letter-spacing: 0.2em;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.footer-links {
+  display: flex; gap: 32px; justify-content: center; margin: 30px 0;
+  list-style: none; flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--cyan); }
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  nav { padding: 0 16px; }
+  .nav-links { gap: 14px; }
+  .custom-hero { padding-top: 140px; padding-bottom: 60px; }
+  .custom-hero h1 { font-size: 2.4rem; }
+  .adv-grid { grid-template-columns: 1fr; }
+  .timeline { padding-left: 32px; }
+  .tl-dot { left: -25px; }
+  .cta-section h2 { font-size: 1.6rem; }
+}
+
+/* ====== Enhanced Responsive ====== */
+@media (max-width: 768px) {
+  /* Navigation */
+  nav { padding: 0 16px; height: 56px; }
+  .nav-brand { font-size: 18px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 12px; }
+  .cn-sub { font-size: 0.4em; margin-top: 2px; }
+  
+  /* Hero */
+  .hero { padding: 100px 16px 40px; margin-top: 56px; }
+  .hero h1 { font-size: 28px; }
+  .hero p { font-size: 14px; max-width: 100%; }
+  .hero-tags { gap: 8px; }
+  .hero-tags span { font-size: 12px; padding: 5px 12px; }
+  
+  /* Section */
+  .section { padding: 60px 16px; }
+  .section-title { font-size: 2rem; }
+  .section-subtitle { font-size: 1.1rem; margin-bottom: 2em; }
+  
+  /* Process Steps */
+  .process-grid { grid-template-columns: 1fr; gap: 30px; }
+  .process-step { padding: 24px; }
+  .process-step h3 { font-size: 1.2rem; }
+  
+  /* Form */
+  .form-grid { grid-template-columns: 1fr; gap: 20px; }
+  .form-group input, .form-group textarea { padding: 12px 16px; font-size: 14px; }
+  .form-submit { padding: 12px 28px; font-size: 15px; }
+  .form-upload-area { padding: 40px 20px; }
+  .form-upload-icon { font-size: 36px; }
+  .form-upload-text { font-size: 14px; }
+  
+  /* Footer */
+  .footer { padding: 60px 16px; margin-top: 60px; }
+  .footer-links { flex-direction: column; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 24px; }
+  .section-title { font-size: 1.7rem; }
+  .process-step { padding: 20px; }
+  .form-group input, .form-group textarea { padding: 10px 14px; }
+}
+
+.nav-cart-link {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  color: #aaa; text-decoration: none; font-size: 20px;
+  transition: color .2s; padding: 4px 8px;
+}
+.nav-cart-link:hover { color: var(--cyan); }
+.nav-cart-badge {
+  position: absolute; top: -4px; right: -6px;
+  background: var(--cyan); color: #000; font-size: 11px; font-weight: 700;
+  min-width: 18px; height: 18px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px; display: none;
+}
+.nav-cart-badge.show { display: flex; }
+</style>
+
+<!-- Resource Hints -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="//miraclegk.com">
+</head>
+<body>
+
+<!-- ═══ Navigation ═══ -->
+<nav>
+  <div class="nav-brand">MIRACLE<span style="color:#00e0ff;">GK</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home<span class="cn-sub">首页</span></a>
+    <a href="products.html">Products<span class="cn-sub">产品分类</span></a>
+    <a href="craft.html">Craft<span class="cn-sub">工艺展示</span></a>
+    <a class="active" href="custom.html">License<span class="cn-sub">合作授权</span></a>
+    <a href="index.html#footer-contact">Contact<span class="cn-sub">联系我们</span></a>
+  
+    <a href="checkout.html" class="nav-cart-link" title="Cart / 购物车">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="nav-cart-badge" id="navCartBadge">0</span>
+    </a>
+</div>
+</nav>
+
+<!-- ═══ Hero ═══ -->
+<section class="custom-hero">
+  <h1>Custom Service</h1>
+  <p>From concept to production — one-stop custom solution for your unique model needs.<span class="cn-sub">从概念到生产，为您独特的模型需求提供一站式定制方案。</span></p>
+</section>
+
+<!-- ═══ Advantage Cards ═══ -->
+<section class="adv-section">
+  <div class="adv-grid">
+    <div class="adv-card">
+      <span class="adv-icon">💰</span>
+      <h3>Wholesale Pricing<span class="cn-sub">批发价格</span></h3>
+      <p>One-piece minimum order, enjoy wholesale pricing.<span class="cn-sub">一件起批，享受批发价。</span></p>
+    </div>
+    <div class="adv-card">
+      <span class="adv-icon">🚀</span>
+      <h3>Fast Dispatch<span class="cn-sub">快速发货</span></h3>
+      <p>In-stock items dispatched within 2 days after order confirmation.<span class="cn-sub">现货产品订单确认后2天内出库发货。</span></p>
+    </div>
+    <div class="adv-card">
+      <span class="adv-icon">🔧</span>
+      <h3>Part Reproduction<span class="cn-sub">零件补配</span></h3>
+      <p>Lost parts can be re-produced on request (non-free service).<span class="cn-sub">因自身原因丢失零件可重新生产补配（非免费服务）。</span></p>
+    </div>
+    <div class="adv-card">
+      <span class="adv-icon">🏭</span>
+      <h3>End-to-End Workflow<span class="cn-sub">端到端流程</span></h3>
+      <p>From design concept to mass production, we handle it all.<span class="cn-sub">从设计理念到批量生产，全程自主完成。</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Pricing & Order Policy ═══ -->
+<section class="detail-section">
+  <h2>Pricing & Order Policy<span class="cn-sub">价格与订单政策</span></h2>
+  <p class="section-desc">Flexible ordering options designed to support creators of all scales.<span class="cn-sub">灵活的订购方案，支持各种规模的创作者。</span></p>
+  <ul>
+    <li><strong>One-piece minimum batch</strong> — Enjoy wholesale pricing even for a single piece.<span class="cn-sub">一件起批 — 即使只订一件也享受批发价格。</span></li>
+    <li><strong>2-day dispatch for in-stock items</strong> — Orders are processed and shipped from our warehouse within 2 business days after confirmation.<span class="cn-sub">现货产品2天内发货 — 订单确认后2个工作日内从仓库出库。</span></li>
+    <li><strong>Flexible payment terms</strong> — We support multiple payment methods for your convenience.<span class="cn-sub">灵活付款方式 — 支持多种付款方式，方便您的交易。</span></li>
+  </ul>
+</section>
+
+<!-- ═══ After-Sales Support ═══ -->
+<section class="detail-section">
+  <h2>After-Sales Support<span class="cn-sub">售后保障</span></h2>
+  <p class="section-desc">We stand behind our products and help you resolve issues when they arise.<span class="cn-sub">我们为产品提供保障，在问题出现时协助您解决。</span></p>
+  <ul>
+    <li><strong>Missing part reproduction</strong> — If you lose small parts (e.g. magnetic accessories for Symbiote series), we can re-produce them for you (fee applies).<span class="cn-sub">零件丢失补配 — 若因自身原因丢失零件（如共生体磁吸小零件），我们可以重新生产该零件（需收费）。</span></li>
+    <li><strong>Shipping damage disclaimer</strong> — We cannot guarantee coverage for damage incurred during transit, as shipping is handled by third-party carriers.<span class="cn-sub">运输损坏说明 — 运输过程中的损坏无法保障，因运输责任由第三方承运商承担。</span></li>
+    <li><strong>Quality inspection</strong> — Every piece undergoes strict QC before shipment to minimize defects.<span class="cn-sub">严格质检 — 每件产品在发货前均经过严格质检，最大限度减少缺陷。</span></li>
+  </ul>
+</section>
+
+<!-- ═══ Shipping Time ═══ -->
+<section class="detail-section">
+  <h2>Shipping Time<span class="cn-sub">运输时效</span></h2>
+  <p class="section-desc">Estimated delivery times vary by destination and shipping method.<span class="cn-sub">预计送达时间因目的地和运输方式而异。</span></p>
+  <ul>
+    <li><strong>Air shipping</strong> — Approximately 1 week to most destinations worldwide.<span class="cn-sub">空运 — 全球大部分地区约1周送达。</span></li>
+    <li><strong>Sea shipping</strong> — 15 days or more, depending on the destination country and customs clearance.<span class="cn-sub">海运 — 15天以上，具体取决于目的国和清关速度。</span></li>
+    <li><strong>Tracking provided</strong> — All orders include tracking information for peace of mind.<span class="cn-sub">提供物流追踪 — 所有订单均提供追踪信息，随时掌握物流动态。</span></li>
+  </ul>
+</section>
+
+<!-- ═══ Custom Workflow Timeline ═══ -->
+<section class="workflow-section">
+  <h2>Custom Workflow<span class="cn-sub">定制流程</span></h2>
+  <p class="section-desc">Our proven 5-step process ensures your vision becomes a reality.<span class="cn-sub">我们成熟的5步流程确保您的创意变为现实。</span></p>
+
+  <div class="timeline">
+    <div class="tl-step">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <h3>Concept Design<span class="cn-sub">概念设计</span></h3>
+        <p>Share your idea, reference images, or concept art with us. Our design team will work with you to refine the concept and create initial sketches for approval.<span class="cn-sub">向我们分享您的创意、参考图或概念原画。我们的设计团队将与您合作完善概念，并制作初始草图供确认。</span></p>
+      </div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <h3>3D Modeling & Printing<span class="cn-sub">3D建模与打印</span></h3>
+        <p>Once the concept is approved, we create high-precision 3D digital models and produce physical prototypes using professional-grade 3D printers for verification.<span class="cn-sub">概念确认后，我们创建高精度3D数字模型，并使用专业级3D打印机生产物理原型供验证。</span></p>
+      </div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <h3>Mold Making<span class="cn-sub">模具制作</span></h3>
+        <p>After prototype confirmation, we produce high-quality silicone and resin molds to prepare for mass casting. Multiple mold sets ensure production efficiency.<span class="cn-sub">原型确认后，我们制作高质量硅胶模和树脂模具，为批量浇铸做准备。多套模具确保生产效率。</span></p>
+      </div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <h3>Production & QC<span class="cn-sub">生产与质检</span></h3>
+        <p>Vacuum degassing casting, hand finishing, multi-layer painting, and strict quality control at every stage to ensure museum-grade quality for every piece.<span class="cn-sub">真空脱泡浇铸、手工修模、多层涂装，每个阶段都经过严格质量控制，确保每件作品达到博物馆级品质。</span></p>
+      </div>
+    </div>
+    <div class="tl-step">
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <h3>Shipping<span class="cn-sub">发货</span></h3>
+        <p>Secure packaging with protective materials, worldwide shipping via air or sea, with tracking provided. Your custom models are on their way!<span class="cn-sub">使用防护材料进行安全包装，通过空运或海运全球发货，提供物流追踪。您的定制模型正在路上！</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <h2>Ready to start your custom project?<span class="cn-sub">准备好开始您的定制项目了吗？</span></h2>
+  <p>Contact us today to discuss your ideas and get a quote.<span class="cn-sub">立即联系我们，讨论您的创意并获取报价。</span></p>
+  <a href="index.html#footer-contact" class="cta-btn">Contact Us / 联系我们</a>
+</section>
+
+<!-- ═══ Footer ═══ -->
+<footer class="footer">
+  <div class="footer-logo">MIRACLE GK</div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Products</a></li>
+    <li><a href="craft.html">Craft</a></li>
+    <li><a href="custom.html">Custom</a></li>
+    <li><a href="index.html#footer-contact">Contact</a></li>
+  </ul>
+  <div style="margin-top:20px; padding:18px 24px; background:rgba(255,255,255,0.06); border-radius:12px; border:1px solid rgba(245,158,11,0.25); display:inline-block; text-align:left;">
+    <p style="margin:0 0 8px; font-size:15px; font-weight:600; color:#f59e0b; letter-spacing:0.5px;">Get in Touch / 联系我们</p>
+    <p style="margin:6px 0; font-size:14px; color:#e5e5e5;"><span style="color:#f59e0b; font-weight:500;">WeChat</span>　liuwenqingqing</p>
+    <p style="margin:6px 0; font-size:14px; color:#e5e5e5;"><span style="color:#f59e0b; font-weight:500;">Phone / WhatsApp</span>　+86 13813290156</p>
+    <p style="margin:6px 0; font-size:14px; color:#e5e5e5;"><span style="color:#f59e0b; font-weight:500;">Email</span>　<a href="mailto:qijistudiogk_nina@163.com" style="color:#00e0ff; text-decoration:none;">qijistudiogk_nina@163.com</a></p>
+  </div>
+  <p style="margin-top:20px;">© 2026 MIRACLE GK. All rights reserved.<span class="cn-sub">保留所有权利</span></p>
+</footer>
+
+
+<script>
+function updateNavBadge(){
+  try{
+    const cart=JSON.parse(localStorage.getItem('miracle_gk_cart'))||[];
+    const c=cart.reduce((s,i)=>s+i.qty,0);
+    const b=document.getElementById('navCartBadge');
+    if(b){b.textContent=c;b.classList.toggle('show',c>0);}
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',updateNavBadge);
+</script>
+</body>
+</html>

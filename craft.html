@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Craft — MIRACLE GK</title>
+<meta name="description" content="Discover our resin model craftsmanship process: 3D sculpting, mold making, resin casting, hand painting, and quality control. Behind the scenes of museum-grade collectibles.">
+<meta name="keywords" content="resin model craftsmanship, 3D sculpting, mold making, resin casting, hand painting, figure production process">
+
+<meta property="og:title" content="MIRACLE GK — Premium Resin Model Factory">
+<meta property="og:description" content="Custom resin model factory specializing in anime, Marvel, and DC collectible statues. From concept to production.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="images/marvel/ironman-mk50.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+/* ====== Reset & Base ====== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #000;
+  --bg-card: rgba(255,255,255,0.05);
+  --cyan: #00e0ff;
+  --purple: #a855f7;
+  --gold: #f59e0b;
+  --text: #f5f5f7;
+  --text-dim: #86868b;
+  --border: rgba(255,255,255,0.1);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.47059;
+  font-weight: 400;
+}
+
+/* ====== Nav ====== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  background: rgba(0,0,0,.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand { font-size: 22px; font-weight: 700; color: var(--cyan); letter-spacing: 1px; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: #aaa; text-decoration: none; font-size: 14px; transition: color .2s; }
+.nav-links a:hover { color: var(--cyan); }
+.nav-links a.active { color: var(--cyan); }
+.cn-sub {
+  display: block; font-size: 0.45em; color: #666; font-weight: 400;
+  margin-top: 4px; letter-spacing: 0.05em;
+}
+
+/* ====== Hero ====== */
+.craft-hero {
+  padding-top: 140px; padding-bottom: 80px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0,224,255,0.05) 0%, transparent 60%);
+}
+.craft-hero h1 {
+  font-size: clamp(3rem, 8vw, 6rem); font-weight: 900;
+  letter-spacing: -0.02em; line-height: 1.05;
+  background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--purple) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 0.2em;
+}
+.craft-hero p {
+  font-size: 1.15rem; color: var(--text-dim); max-width: 600px; margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ====== Timeline / Steps ====== */
+.craft-section {
+  max-width: 1100px; margin: 0 auto; padding: 100px 20px;
+}
+.craft-step {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 40px;
+  align-items: start;
+  margin-bottom: 100px;
+  position: relative;
+}
+.craft-step:last-child { margin-bottom: 0; }
+
+.step-label {
+  position: sticky; top: 120px;
+  text-align: right;
+  padding-right: 30px;
+  border-right: 2px solid rgba(0,224,255,0.2);
+}
+.step-label h2 {
+  font-size: 1.6rem; font-weight: 700; line-height: 1.2;
+  background: linear-gradient(135deg, #fff, var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+.step-label .cn-sub { text-align: right; }
+
+.step-content {
+  display: flex; flex-direction: column; gap: 24px;
+}
+
+/* Video Card */
+.video-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s;
+}
+.video-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,224,255,0.3);
+}
+.video-card video {
+  width: 100%; display: block;
+  max-height: 500px; object-fit: contain;
+  background: #000;
+}
+.video-caption {
+  padding: 16px 20px;
+  font-size: 0.85rem; color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
+
+/* Image Card */
+.image-card {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s;
+  cursor: pointer;
+}
+.image-card:hover {
+  transform: scale(1.01);
+  border-color: rgba(168,85,247,0.3);
+}
+.image-card img {
+  width: 100%; display: block;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.image-card:hover img {
+  transform: scale(1.05);
+}
+
+/* ====== CTA Section ====== */
+.cta-section {
+  text-align: center;
+  padding: 120px 20px;
+  background: linear-gradient(180deg, transparent 0%, rgba(168,85,247,0.06) 50%, transparent 100%);
+}
+.cta-section h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1;
+  margin-bottom: 0.3em;
+}
+.cta-section h2 .cn-sub { font-size: 0.45em; }
+.cta-btn {
+  display: inline-block; margin-top: 32px;
+  padding: 16px 48px; border-radius: 40px;
+  font-size: 1.1rem; font-weight: 600; letter-spacing: 0.05em;
+  text-decoration: none; color: #000;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 24px rgba(0,224,255,0.25);
+}
+.cta-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 40px rgba(168,85,247,0.35);
+}
+
+/* ====== Footer ====== */
+.footer {
+  text-align: center; padding: 80px 20px; margin-top: 60px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim); font-size: 0.85rem;
+}
+.footer-logo {
+  font-size: 1.2rem; font-weight: 700; letter-spacing: 0.2em;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.footer-links {
+  display: flex; gap: 32px; justify-content: center; margin: 30px 0;
+  list-style: none; flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--text-dim); text-decoration: none; font-size: 0.9rem;
+  transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--cyan); }
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  nav { padding: 0 16px; }
+  .nav-links { gap: 14px; font-size: 12px; }
+  .craft-step {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .step-label {
+    position: static;
+    text-align: left;
+    padding-right: 0;
+    border-right: none;
+    border-bottom: 2px solid rgba(0,224,255,0.2);
+    padding-bottom: 16px;
+  }
+  .step-label .cn-sub { text-align: left; }
+  .craft-section { padding: 60px 16px; }
+  .cta-section { padding: 80px 16px; }
+  .footer-links { flex-direction: column; gap: 16px; }
+}
+
+/* ====== Enhanced Responsive ====== */
+@media (max-width: 768px) {
+  /* Navigation */
+  nav { padding: 0 16px; height: 56px; }
+  .nav-brand { font-size: 18px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 12px; }
+  .cn-sub { font-size: 0.4em; margin-top: 2px; }
+  
+  /* Hero */
+  .hero { padding: 100px 16px 40px; margin-top: 56px; }
+  .hero h1 { font-size: 28px; }
+  .hero p { font-size: 14px; max-width: 100%; }
+  
+  /* Section */
+  .section { padding: 60px 16px; }
+  .section-title { font-size: 2rem; }
+  .section-subtitle { font-size: 1.1rem; margin-bottom: 2em; }
+  
+  /* Craft Grid */
+  .craft-grid { grid-template-columns: 1fr; gap: 30px; }
+  .craft-card { padding: 24px; }
+  .craft-card h3 { font-size: 1.2rem; }
+  .craft-card p { font-size: 0.9rem; }
+  .craft-image { height: 200px; }
+  
+  /* Video Section */
+  .video-grid { grid-template-columns: 1fr; gap: 20px; }
+  .video-card { padding: 0; }
+  .video-thumb { height: 180px; }
+  .video-play-btn { width: 50px; height: 50px; font-size: 24px; }
+  
+  /* Footer */
+  .footer { padding: 60px 16px; margin-top: 60px; }
+  .footer-links { flex-direction: column; gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 24px; }
+  .section-title { font-size: 1.7rem; }
+  .craft-card { padding: 20px; }
+  .craft-image { height: 160px; }
+  .video-thumb { height: 150px; }
+  .video-play-btn { width: 44px; height: 44px; font-size: 20px; }
+}
+
+.nav-cart-link {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  color: #aaa; text-decoration: none; font-size: 20px;
+  transition: color .2s; padding: 4px 8px;
+}
+.nav-cart-link:hover { color: var(--cyan); }
+.nav-cart-badge {
+  position: absolute; top: -4px; right: -6px;
+  background: var(--cyan); color: #000; font-size: 11px; font-weight: 700;
+  min-width: 18px; height: 18px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px; display: none;
+}
+.nav-cart-badge.show { display: flex; }
+</style>
+
+<!-- Resource Hints -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="//miraclegk.com">
+
+<!-- Preload craft images and video poster -->
+<link rel="preload" as="image" href="images/craft/craft-01.jpg">
+<link rel="preload" as="image" href="images/craft/craft-02.jpg">
+</head>
+<body>
+
+<!-- ═══ Navigation ═══ -->
+<nav>
+  <div class="nav-brand">MIRACLE<span style="color:#00e0ff;">GK</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home<span class="cn-sub">首页</span></a>
+    <a href="products.html">Products<span class="cn-sub">产品分类</span></a>
+    <a class="active" href="craft.html">Craft<span class="cn-sub">工艺展示</span></a>
+    <a href="custom.html">License<span class="cn-sub">合作授权</span></a>
+    <a href="index.html#footer-contact">Contact<span class="cn-sub">联系我们</span></a>
+  
+    <a href="checkout.html" class="nav-cart-link" title="Cart / 购物车">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="nav-cart-badge" id="navCartBadge">0</span>
+    </a>
+</div>
+</nav>
+
+<!-- ═══ Hero ═══ -->
+<section class="craft-hero">
+  <h1>Craftsmanship</h1>
+  <p class="cn-sub" style="font-size:1rem;color:#666;margin-bottom:16px;">工艺展示</p>
+  <p>Discover how raw ideas transform into museum-grade resin masterpieces through our meticulous craftsmanship process — from digital sculpting to final quality control.<span class="cn-sub" style="display:block;margin-top:8px;">从数字雕刻到最终质检，探索原始创意如何通过我们精湛的工艺转化为博物馆级树脂杰作。</span></p>
+</section>
+
+<!-- ═══ Craft Steps ═══ -->
+<section class="craft-section">
+
+  <!-- Step 1: Modeling & Prototyping -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Modeling<span class="cn-sub">建模与原型</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="video-card">
+        <video src="videos/craft-07.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Digital sculpting &amp; 3D prototyping — shaping every curve with precision.</div>
+      </div>
+      <div class="video-card">
+        <video src="videos/craft-08.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Prototype refinement — iterating until every detail is perfect.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Mold Making -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Mold Making<span class="cn-sub">翻模制模</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="video-card">
+        <video src="videos/craft-01.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Silicone mold preparation — the foundation of every great cast.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Resin Casting -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Resin Casting<span class="cn-sub">树脂浇铸</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="video-card">
+        <video src="videos/craft-03.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Vacuum degassing &amp; pouring — bubble-free, crystal-clear results.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Sanding & Finishing -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Sanding &amp; Finishing<span class="cn-sub">打磨修整</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="video-card">
+        <video src="videos/craft-02.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Precision sanding — smoothing every surface to perfection.</div>
+      </div>
+      <div class="video-card">
+        <video src="videos/craft-05.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Flash removal &amp; seam line cleanup — the devil is in the details.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: Painting & Weathering -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Painting &amp; Weathering<span class="cn-sub">涂装上色</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="video-card">
+        <video src="videos/craft-04.mov" controls preload="metadata" playsinline style="max-height:none;"></video>
+        <div class="video-caption">Airbrush layering &amp; weathering — bringing characters to life with color.</div>
+      </div>
+      <div class="video-card">
+        <video src="videos/craft-06.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">Detail painting &amp; wash — depth, shadow, and soul.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 6: Assembly & QC -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Assembly &amp; QC<span class="cn-sub">组装质检</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="image-card">
+        <img loading="lazy"  src="images/craft/craft-01.jpg" alt="Assembly QC">
+      </div>
+      <div class="image-card">
+        <img loading="lazy"  src="images/craft/craft-02.jpg" alt="Final QC Check">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 7: Final Product -->
+  <div class="craft-step">
+    <div class="step-label">
+      <h2>Final Product<span class="cn-sub">成品展示</span></h2>
+    </div>
+    <div class="step-content">
+      <div class="video-card">
+        <video src="videos/craft-09.mov" controls preload="metadata" playsinline></video>
+        <div class="video-caption">The finished masterpiece — ready to ship to collectors worldwide.</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══ CTA Section ═══ -->
+<section class="cta-section">
+  <h2>Interested in working with us?<span class="cn-sub">有兴趣合作吗？</span></h2>
+  <p style="color:var(--text-dim);margin-top:16px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6;">
+    Whether you're a brand looking for manufacturing partnership, or a collector seeking custom resin works — we'd love to hear from you.<span class="cn-sub" style="display:block;margin-top:8px;font-size:0.85em;">无论您是寻求制造合作的品牌，还是寻找定制树脂作品的收藏家——我们都期待您的联系。</span></p>
+  <a href="index.html#footer-contact" class="cta-btn">Contact Us / 联系我们</a>
+</section>
+
+<!-- ═══ Footer ═══ -->
+<footer class="footer" id="footer-contact">
+  <div class="footer-logo">MIRACLE GK</div>
+  <ul class="footer-links">
+    <li><a href="index.html#intro">About<span class="cn-sub">公司介绍</span></a></li>
+    <li><a href="products.html">Products<span class="cn-sub">产品分类</span></a></li>
+    <li><a href="craft.html">Craft<span class="cn-sub">工艺展示</span></a></li>
+    <li><a href="custom.html">License<span class="cn-sub">合作授权</span></a></li>
+    <li><a href="index.html#footer-contact">Contact<span class="cn-sub">联系我们</span></a></li>
+  </ul>
+  <div style="margin-top:16px; padding:16px 22px; background:rgba(255,255,255,0.06); border-radius:12px; border:1px solid rgba(245,158,11,0.25); display:inline-block; text-align:left;">
+    <p style="margin:0 0 8px; font-size:15px; font-weight:600; color:#f59e0b; letter-spacing:0.5px;">Get in Touch / 联系我们</p>
+    <p style="margin:6px 0; font-size:14px; color:#e5e5e5;"><span style="color:#f59e0b; font-weight:500;">WeChat</span>　liuwenqingqing</p>
+    <p style="margin:6px 0; font-size:14px; color:#e5e5e5;"><span style="color:#f59e0b; font-weight:500;">Phone / WhatsApp</span>　<a href="tel:+8613813290156" style="color:#00e0ff; text-decoration:none;">+86 13813290156</a></p>
+    <p style="margin:6px 0; font-size:14px; color:#e5e5e5;"><span style="color:#f59e0b; font-weight:500;">Email</span>　<a href="mailto:qijistudiogk_nina@163.com" style="color:#00e0ff; text-decoration:none;">qijistudiogk_nina@163.com</a></p>
+  </div>
+  <p style="margin-top:16px;">© 2026 MIRACLE GK. All rights reserved.<span class="cn-sub">保留所有权利</span></p>
+</footer>
+
+
+<script>
+function updateNavBadge(){
+  try{
+    const cart=JSON.parse(localStorage.getItem('miracle_gk_cart'))||[];
+    const c=cart.reduce((s,i)=>s+i.qty,0);
+    const b=document.getElementById('navCartBadge');
+    if(b){b.textContent=c;b.classList.toggle('show',c>0);}
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',updateNavBadge);
+</script>
+</body>
+</html>

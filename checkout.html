@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRACLE GK — Checkout</title>
+<meta name="description" content="Secure checkout for MIRACLE GK resin model orders. PayPal payment supported.">
+
+<style>
+/* ====== Reset & Base ====== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #000;
+  --bg-card: rgba(255,255,255,0.05);
+  --cyan: #00e0ff;
+  --purple: #a855f7;
+  --gold: #f59e0b;
+  --green: #22c55e;
+  --text: #f5f5f7;
+  --text-dim: #86868b;
+  --border: rgba(255,255,255,0.1);
+  --danger: #ef4444;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.47059;
+  font-weight: 400;
+  min-height: 100vh;
+}
+
+.cn-sub { display: block; font-size: 0.45em; color: #666; font-weight: 400; margin-top: 4px; letter-spacing: 0.05em; }
+
+/* ── Navigation ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  background: rgba(0,0,0,.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand { font-size: 22px; font-weight: 700; color: var(--cyan); letter-spacing: 1px; }
+.nav-brand span { color: var(--cyan); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: #aaa; text-decoration: none; font-size: 14px; transition: color .2s; }
+.nav-links a:hover { color: var(--cyan); }
+.nav-cart-link {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  color: #aaa; text-decoration: none; font-size: 20px;
+  transition: color .2s; padding: 4px 8px;
+}
+.nav-cart-link:hover { color: var(--cyan); }
+.nav-cart-badge {
+  position: absolute; top: -4px; right: -6px;
+  background: var(--cyan); color: #000; font-size: 11px; font-weight: 700;
+  min-width: 18px; height: 18px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px; display: none;
+}
+.nav-cart-badge.show { display: flex; }
+
+/* ── Hero ── */
+.checkout-hero {
+  padding: 120px 20px 40px; margin-top: 64px; text-align: center;
+  background: linear-gradient(135deg, #000 0%, #0a1628 50%, #000 100%);
+  border-bottom: 1px solid var(--border);
+}
+.checkout-hero h1 { font-size: 32px; color: var(--cyan); margin-bottom: 8px; }
+.checkout-hero p { color: var(--text-dim); font-size: 15px; }
+
+/* ── Step Indicator ── */
+.step-indicator {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; margin: 0 auto 36px; max-width: 500px;
+}
+.step-indicator .step-item {
+  display: flex; align-items: center; gap: 10px; cursor: default;
+}
+.step-indicator .step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  border: 2px solid #444; color: #666; background: transparent;
+  transition: all .3s;
+}
+.step-indicator .step-item.active .step-num {
+  border-color: var(--cyan); color: #000; background: var(--cyan);
+}
+.step-indicator .step-item.done .step-num {
+  border-color: var(--green); color: #000; background: var(--green);
+}
+.step-indicator .step-label {
+  font-size: 13px; color: #555; font-weight: 500; white-space: nowrap;
+  transition: color .3s;
+}
+.step-indicator .step-item.active .step-label { color: var(--cyan); }
+.step-indicator .step-item.done .step-label { color: var(--green); }
+.step-indicator .step-line {
+  width: 64px; height: 2px; background: #333; margin: 0 16px; flex-shrink: 0;
+  transition: background .3s;
+}
+.step-indicator .step-line.done { background: var(--green); }
+
+/* ── Checkout Layout ── */
+.checkout-layout {
+  display: flex; gap: 40px; max-width: 1200px; margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+.checkout-left { flex: 1.2; }
+.checkout-right { flex: 1; }
+
+/* ── Step Panels ── */
+.step-panel { display: none; }
+.step-panel.active { display: block; }
+
+/* ── Order Items ── */
+.order-items-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.order-items-card h2 { font-size: 18px; color: var(--cyan); margin-bottom: 20px; }
+.order-item {
+  display: flex; gap: 16px; padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.order-item:last-child { border-bottom: none; }
+.order-item-img {
+  width: 72px; height: 72px; border-radius: 10px; overflow: hidden;
+  background: #111; flex-shrink: 0;
+}
+.order-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.order-item-info { flex: 1; }
+.order-item-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.order-item-sku { font-size: 11px; color: var(--text-dim); }
+.order-item-qty { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+.order-item-price { font-size: 15px; font-weight: 600; color: var(--cyan); text-align: right; }
+
+/* ── Order Summary ── */
+.order-summary-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; position: sticky; top: 88px;
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; font-size: 14px; color: var(--text-dim);
+}
+.summary-row.total { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 16px; font-size: 18px; color: var(--text); font-weight: 600; }
+.summary-row .amount { color: var(--cyan); font-weight: 700; }
+
+/* ── Shipping Form (Step 1) ── */
+.shipping-form-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.shipping-form-card h2 { font-size: 18px; color: var(--cyan); margin-bottom: 20px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; font-weight: 500;
+}
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 16px; border-radius: 10px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  color: var(--text); font-size: 14px; font-family: inherit;
+  transition: border-color .2s;
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none; border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0,224,255,.1);
+}
+.form-group input::placeholder { color: #555; }
+.form-group select option { background: #1a1a2e; color: var(--text); }
+.form-group select optgroup {
+  background: #1a1a2e; color: var(--cyan); font-weight: 700;
+  font-style: normal; font-size: 13px;
+}
+
+/* ── Validation Error Styles ── */
+.form-group .error-hint {
+  color: var(--danger); font-size: 12px; margin-top: 4px; display: none; line-height: 1.4;
+}
+.form-group.has-error input,
+.form-group.has-error select {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 2px rgba(239,68,68,.12);
+}
+.form-group.has-error .error-hint { display: block; }
+.form-group.has-error label { color: var(--danger); }
+
+.form-row { display: flex; gap: 16px; }
+.form-row .form-group { flex: 1; }
+
+/* ── Shipping Method ── */
+.shipping-methods { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.shipping-method {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: 12px;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+  cursor: pointer; transition: all .2s;
+}
+.shipping-method:hover { border-color: rgba(0,224,255,.3); }
+.shipping-method.selected { border-color: var(--cyan); background: rgba(0,224,255,.06); }
+.shipping-method input { display: none; }
+.shipping-method .radio-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid #555; flex-shrink: 0; transition: all .2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.shipping-method.selected .radio-dot { border-color: var(--cyan); }
+.shipping-method.selected .radio-dot::after {
+  content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--cyan);
+}
+.shipping-method-info { flex: 1; }
+.shipping-method-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.shipping-method-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.shipping-method-price { font-size: 15px; font-weight: 600; color: var(--cyan); }
+
+/* ── Step 1 Button ── */
+.btn-next {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px 28px; border-radius: 12px;
+  background: linear-gradient(135deg, #00e0ff 0%, #00b4d8 100%);
+  color: #000; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer; transition: all .25s; font-family: inherit;
+  margin-top: 20px;
+}
+.btn-next:hover { box-shadow: 0 6px 24px rgba(0,224,255,.35); }
+.btn-next:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+.btn-next:active { transform: scale(0.98); }
+
+/* ── Step 2: PayPal Panel ── */
+.paypal-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.paypal-panel h2 { font-size: 18px; color: var(--cyan); margin-bottom: 8px; }
+.paypal-panel h3 { font-size: 16px; color: var(--cyan); margin-bottom: 8px; }
+.paypal-panel > p { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
+
+#paypal-button-container { min-height: 50px; margin-bottom: 8px; }
+.paypal-note { font-size: 12px; color: var(--text-dim); margin-top: 12px; text-align: center; }
+
+/* ── Shipping Summary (inside Step 2) ── */
+.shipping-summary-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.shipping-summary-card h2 { font-size: 18px; color: var(--cyan); margin-bottom: 20px; }
+.shipping-summary-card .summary-row { border-bottom: none; }
+.shipping-summary-card .summary-row .label { color: var(--text-dim); font-size: 13px; }
+.shipping-summary-card .summary-row .value { color: var(--text); font-size: 13px; font-weight: 500; }
+
+/* ── Step 2 Back Button ── */
+.btn-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 12px 24px; border-radius: 10px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-dim); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all .2s; font-family: inherit;
+  margin-top: 16px;
+}
+.btn-back:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ── Step 3: Order Confirmation ── */
+.confirm-panel { text-align: center; }
+.confirm-success-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(34,197,94,.15); border: 2px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px; font-size: 40px; color: var(--green);
+}
+.confirm-panel h2 { font-size: 26px; color: var(--green); margin-bottom: 12px; }
+.confirm-panel .confirm-desc {
+  font-size: 14px; color: var(--text-dim); line-height: 1.7; margin-bottom: 8px;
+}
+.confirm-id-card {
+  display: inline-block; padding: 10px 22px; border-radius: 10px;
+  background: rgba(0,224,255,.1); border: 1px solid rgba(0,224,255,.25);
+  color: var(--cyan); font-size: 15px; font-weight: 600; margin: 16px 0;
+}
+.confirm-detail-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; text-align: left; margin-top: 24px;
+}
+.confirm-detail-card h3 { font-size: 16px; color: var(--cyan); margin-bottom: 16px; }
+.confirm-row {
+  display: flex; justify-content: space-between; padding: 8px 0;
+  font-size: 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.confirm-row:last-child { border-bottom: none; }
+.confirm-row .label { color: var(--text-dim); }
+.confirm-row .value { color: var(--text); font-weight: 500; text-align: right; }
+.confirm-row .value.highlight { color: var(--cyan); }
+.confirm-row .value.green { color: var(--green); }
+
+.confirm-actions { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.confirm-actions .track-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 12px 28px; border-radius: 12px;
+  background: linear-gradient(135deg, #00e0ff 0%, #00b4d8 100%);
+  color: #000; font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: all .25s; border: none; cursor: pointer; font-family: inherit;
+}
+.confirm-actions .track-btn:hover { box-shadow: 0 6px 24px rgba(0,224,255,.35); }
+.confirm-actions .home-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 12px 28px; border-radius: 12px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-dim); font-size: 15px; font-weight: 500; text-decoration: none;
+  transition: all .2s; cursor: pointer; font-family: inherit;
+}
+.confirm-actions .home-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ── Empty Cart ── */
+.empty-cart-msg {
+  text-align: center; padding: 60px 20px; color: #666;
+}
+.empty-cart-msg a { color: var(--cyan); text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .checkout-layout { flex-direction: column; padding: 30px 20px 60px; }
+  .order-summary-card { position: static; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 16px; height: 56px; }
+  .nav-brand { font-size: 18px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 12px; }
+  .checkout-hero { padding: 100px 16px 30px; }
+  .checkout-hero h1 { font-size: 26px; }
+  .checkout-layout { padding: 20px 14px 60px; }
+  .form-row { flex-direction: column; gap: 0; }
+  .step-indicator { gap: 0; }
+  .step-indicator .step-label { font-size: 11px; }
+  .step-indicator .step-line { width: 32px; margin: 0 8px; }
+  .confirm-actions { flex-direction: column; }
+}
+@media (max-width: 480px) {
+  .nav-links a:nth-child(5) { display: none; }
+  .checkout-hero h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Navigation ═══ -->
+<nav>
+  <div class="nav-brand">MIRACLE<span style="color:#00e0ff;">GK</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home<span class="cn-sub">首页</span></a>
+    <a href="products.html">Products<span class="cn-sub">产品分类</span></a>
+    <a href="craft.html">Craft<span class="cn-sub">工艺展示</span></a>
+    <a href="custom.html">License<span class="cn-sub">合作授权</span></a>
+    <a href="index.html#footer-contact">Contact<span class="cn-sub">联系我们</span></a>
+    <a href="checkout.html" class="nav-cart-link" title="Cart / 购物车">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="nav-cart-badge" id="navCartBadge">0</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ Hero ═══ -->
+<section class="checkout-hero">
+  <h1>Checkout<span class="cn-sub">结算</span></h1>
+  <p id="heroSubtitle">Complete your purchase securely<span class="cn-sub">安全完成您的购买</span></p>
+</section>
+
+<!-- ═══ Step Indicator ═══ -->
+<div class="checkout-layout" style="padding-bottom:0;">
+  <div class="step-indicator" id="stepIndicator" style="grid-column: 1/-1; width:100%;">
+    <div class="step-item active" data-step="1">
+      <div class="step-num">1</div>
+      <div class="step-label">Shipping Info<span class="cn-sub">配送信息</span></div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-item" data-step="2">
+      <div class="step-num">2</div>
+      <div class="step-label">PayPal Payment<span class="cn-sub">PayPal 支付</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Checkout Layout ═══ -->
+<div class="checkout-layout">
+<div class="checkout-left">
+
+  <!-- Step 1: Shipping Info -->
+  <div class="step-panel active" id="panel-step1">
+    <div class="shipping-form-card">
+      <h2>Shipping Information<span class="cn-sub">配送信息</span></h2>
+      <form id="shippingForm" onsubmit="return false;" novalidate>
+        <!-- Full Name -->
+        <div class="form-group" id="fg-shipName">
+          <label>Full Name *<span class="cn-sub">收货人姓名</span></label>
+          <input type="text" id="shipName" placeholder="John Doe" maxlength="60" autocomplete="name">
+          <div class="error-hint" id="err-shipName"></div>
+        </div>
+
+        <!-- Email + Phone -->
+        <div class="form-row">
+          <div class="form-group" id="fg-shipEmail">
+            <label>Email *<span class="cn-sub">邮箱</span></label>
+            <input type="email" id="shipEmail" placeholder="you@example.com" autocomplete="email">
+            <div class="error-hint" id="err-shipEmail"></div>
+          </div>
+          <div class="form-group" id="fg-shipPhone">
+            <label>Phone *<span class="cn-sub">手机号</span></label>
+            <input type="tel" id="shipPhone" placeholder="+1 (555) 123-4567" autocomplete="tel">
+            <div class="error-hint" id="err-shipPhone"></div>
+          </div>
+        </div>
+
+        <!-- Street Address -->
+        <div class="form-group" id="fg-shipAddress">
+          <label>Street Address *<span class="cn-sub">详细地址</span></label>
+          <input type="text" id="shipAddress" placeholder="123 Main St, Apt 4" maxlength="200" autocomplete="street-address">
+          <div class="error-hint" id="err-shipAddress"></div>
+        </div>
+
+        <!-- City + State -->
+        <div class="form-row">
+          <div class="form-group" id="fg-shipCity">
+            <label>City *<span class="cn-sub">城市</span></label>
+            <input type="text" id="shipCity" placeholder="New York" maxlength="100" autocomplete="address-level2">
+            <div class="error-hint" id="err-shipCity"></div>
+          </div>
+          <div class="form-group" id="fg-shipState">
+            <label>State / Province *<span class="cn-sub">省/州</span></label>
+            <input type="text" id="shipState" placeholder="NY" maxlength="100" autocomplete="address-level1">
+            <div class="error-hint" id="err-shipState"></div>
+          </div>
+        </div>
+
+        <!-- ZIP + Country -->
+        <div class="form-row">
+          <div class="form-group" id="fg-shipZip">
+            <label>ZIP / Postal Code *<span class="cn-sub">邮编</span></label>
+            <input type="text" id="shipZip" placeholder="10001" maxlength="20" autocomplete="postal-code">
+            <div class="error-hint" id="err-shipZip"></div>
+          </div>
+          <div class="form-group" id="fg-shipCountry">
+            <label>Country / Region *<span class="cn-sub">国家/地区</span></label>
+            <select id="shipCountry" autocomplete="country">
+              <option value="">— Select Country / 选择国家 —</option>
+              <optgroup label="Asia / 亚洲">
+                <option value="CN">China (中国)</option>
+                <option value="JP">Japan (日本)</option>
+                <option value="KR">South Korea (韩国)</option>
+                <option value="MY">Malaysia (马来西亚)</option>
+                <option value="SG">Singapore (新加坡)</option>
+                <option value="TH">Thailand (泰国)</option>
+                <option value="VN">Vietnam (越南)</option>
+                <option value="IN">India (印度)</option>
+                <option value="ID">Indonesia (印度尼西亚)</option>
+                <option value="PH">Philippines (菲律宾)</option>
+                <option value="AE">United Arab Emirates (阿联酋)</option>
+                <option value="SA">Saudi Arabia (沙特阿拉伯)</option>
+                <option value="IL">Israel (以色列)</option>
+                <option value="QA">Qatar (卡塔尔)</option>
+                <option value="TW">Taiwan (台湾)</option>
+                <option value="HK">Hong Kong (香港)</option>
+                <option value="BD">Bangladesh (孟加拉国)</option>
+                <option value="PK">Pakistan (巴基斯坦)</option>
+              </optgroup>
+              <optgroup label="Europe / 欧洲">
+                <option value="GB">United Kingdom (英国)</option>
+                <option value="FR">France (法国)</option>
+                <option value="DE">Germany (德国)</option>
+                <option value="IT">Italy (意大利)</option>
+                <option value="ES">Spain (西班牙)</option>
+                <option value="NL">Netherlands (荷兰)</option>
+                <option value="BE">Belgium (比利时)</option>
+                <option value="CH">Switzerland (瑞士)</option>
+                <option value="SE">Sweden (瑞典)</option>
+                <option value="NO">Norway (挪威)</option>
+                <option value="DK">Denmark (丹麦)</option>
+                <option value="FI">Finland (芬兰)</option>
+                <option value="AT">Austria (奥地利)</option>
+                <option value="PL">Poland (波兰)</option>
+                <option value="PT">Portugal (葡萄牙)</option>
+                <option value="RU">Russia (俄罗斯)</option>
+                <option value="IE">Ireland (爱尔兰)</option>
+                <option value="GR">Greece (希腊)</option>
+                <option value="CZ">Czech Republic (捷克)</option>
+                <option value="HU">Hungary (匈牙利)</option>
+                <option value="RO">Romania (罗马尼亚)</option>
+              </optgroup>
+              <optgroup label="North America / 北美">
+                <option value="US">United States (美国)</option>
+                <option value="CA">Canada (加拿大)</option>
+                <option value="MX">Mexico (墨西哥)</option>
+              </optgroup>
+              <optgroup label="South America / 南美">
+                <option value="BR">Brazil (巴西)</option>
+                <option value="AR">Argentina (阿根廷)</option>
+                <option value="CL">Chile (智利)</option>
+                <option value="CO">Colombia (哥伦比亚)</option>
+                <option value="PE">Peru (秘鲁)</option>
+              </optgroup>
+              <optgroup label="Oceania / 大洋洲">
+                <option value="AU">Australia (澳大利亚)</option>
+                <option value="NZ">New Zealand (新西兰)</option>
+              </optgroup>
+              <optgroup label="Africa / 非洲">
+                <option value="ZA">South Africa (南非)</option>
+                <option value="EG">Egypt (埃及)</option>
+                <option value="NG">Nigeria (尼日利亚)</option>
+                <option value="KE">Kenya (肯尼亚)</option>
+              </optgroup>
+            </select>
+            <div class="error-hint" id="err-shipCountry"></div>
+          </div>
+        </div>
+
+        <!-- Shipping Method -->
+        <h2 style="font-size:16px;color:var(--cyan);margin:28px 0 12px;">Shipping Method</h2>
+        <div class="shipping-methods" id="shippingMethods">
+          <div class="shipping-method selected" onclick="selectShipping(this, 25, 'Standard', '15-30 business days / 15-30 个工作日')">
+            <div class="radio-dot"></div>
+            <div class="shipping-method-info">
+              <div class="shipping-method-name">Standard Shipping<span class="cn-sub">标准配送</span></div>
+              <div class="shipping-method-desc">15-30 business days<span class="cn-sub">15-30 个工作日</span></div>
+            </div>
+            <div class="shipping-method-price">$25</div>
+          </div>
+          <div class="shipping-method" onclick="selectShipping(this, 45, 'Express', '7-15 business days / 7-15 个工作日')">
+            <div class="radio-dot"></div>
+            <div class="shipping-method-info">
+              <div class="shipping-method-name">Express Shipping<span class="cn-sub">快速配送</span></div>
+              <div class="shipping-method-desc">7-15 business days<span class="cn-sub">7-15 个工作日</span></div>
+            </div>
+            <div class="shipping-method-price">$45</div>
+          </div>
+          <div class="shipping-method" onclick="selectShipping(this, 60, 'Priority', '3-7 business days / 3-7 个工作日')">
+            <div class="radio-dot"></div>
+            <div class="shipping-method-info">
+              <div class="shipping-method-name">Priority Shipping<span class="cn-sub">优先配送</span></div>
+              <div class="shipping-method-desc">3-7 business days<span class="cn-sub">3-7 个工作日</span></div>
+            </div>
+            <div class="shipping-method-price">$60</div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <button class="btn-next" id="btnStep1Next" onclick="goToStep(2)">
+      Proceed to PayPal Payment<span class="cn-sub">进入 PayPal 支付</span> →
+    </button>
+  </div>
+
+  <!-- Step 2: PayPal Payment -->
+  <div class="step-panel" id="panel-step2">
+    <!-- Shipping summary (read-only) -->
+    <div class="shipping-summary-card">
+      <h2>Shipping Summary<span class="cn-sub">配送信息确认</span></h2>
+      <div class="summary-row"><span class="label">Name</span><span class="value" id="payName">—</span></div>
+      <div class="summary-row"><span class="label">Email</span><span class="value" id="payEmail">—</span></div>
+      <div class="summary-row"><span class="label">Phone</span><span class="value" id="payPhone">—</span></div>
+      <div class="summary-row"><span class="label">Address</span><span class="value" id="payAddress">—</span></div>
+      <div class="summary-row"><span class="label">City / State</span><span class="value" id="payCityState">—</span></div>
+      <div class="summary-row"><span class="label">ZIP / Country</span><span class="value" id="payZipCountry">—</span></div>
+      <div class="summary-row" style="border-top:1px solid var(--border);margin-top:8px;padding-top:12px;">
+        <span class="label">Shipping Method</span><span class="value" id="payShipMethod" style="color:var(--cyan);">—</span>
+      </div>
+    </div>
+
+    <!-- PayPal -->
+    <div class="paypal-panel">
+      <h2>Pay with PayPal<span class="cn-sub">PayPal 支付</span></h2>
+      <p>Secure payment via PayPal. Click the button below to complete your purchase.<span class="cn-sub">通过 PayPal 安全支付，点击下方按钮完成购买。</span></p>
+      <div id="paypal-button-container"></div>
+      <p class="paypal-note">You will be redirected to PayPal to confirm payment.<span class="cn-sub">您将被引导至 PayPal 确认付款。</span></p>
+    </div>
+
+    <button class="btn-back" onclick="goToStep(1)">← <span>Back to Shipping Info<span class="cn-sub">返回配送信息</span></span></button>
+  </div>
+
+  <!-- Step 3: Order Confirmation -->
+  <div class="step-panel" id="panel-step3">
+    <div class="confirm-panel">
+      <div class="confirm-success-icon">✓</div>
+      <h2>Order Confirmed!<span class="cn-sub">订单已确认！</span></h2>
+      <p class="confirm-desc">Your payment has been processed successfully.<span class="cn-sub">您的支付已成功处理。</span></p>
+      <div class="confirm-id-card" id="confirmOrderIdCard">
+        Order #<span id="confirmOrderId">—</span>
+      </div>
+      <div class="confirm-detail-card">
+        <h3>Order Summary<span class="cn-sub">订单摘要</span></h3>
+        <div id="confirmItems"></div>
+        <div class="confirm-row">
+          <span class="label">Shipping Address<span class="cn-sub">配送地址</span></span>
+          <span class="value" id="confirmAddress">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">Payment Method<span class="cn-sub">支付方式</span></span>
+          <span class="value" id="confirmPaymentMethod">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">Total Amount<span class="cn-sub">总金额</span></span>
+          <span class="value highlight" id="confirmTotal">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">Tracking Number<span class="cn-sub">物流单号</span></span>
+          <span class="value green" id="confirmTrackingId">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">Estimated Delivery<span class="cn-sub">预计送达</span></span>
+          <span class="value" id="confirmEta" style="color:var(--gold);">—</span>
+        </div>
+      </div>
+      <div class="confirm-actions">
+        <a href="#" class="track-btn" id="confirmTrackBtn">Track Order<span class="cn-sub">查看物流</span> →</a>
+        <a href="products.html" class="home-btn">← <span>Continue Shopping<span class="cn-sub">继续购物</span></span></a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /checkout-left -->
+
+<div class="checkout-right">
+
+  <!-- Order Items (always visible) -->
+  <div class="order-items-card" id="orderItemsCard">
+    <h2>Order Items<span class="cn-sub">订单商品</span></h2>
+    <div id="orderItemsList"></div>
+  </div>
+
+  <!-- Order Summary (always visible) -->
+  <div class="order-summary-card" id="orderSummaryCard">
+    <div class="summary-row"><span>Subtotal<span class="cn-sub">小计</span></span><span class="amount" id="summarySubtotal">$0.00</span></div>
+    <div class="summary-row"><span>Shipping<span class="cn-sub">运费</span></span><span class="amount" id="summaryShipping">$0.00</span></div>
+    <div class="summary-row"><span>Tax (Est.)<span class="cn-sub">税费（预估）</span></span><span class="amount" id="summaryTax">$0.00</span></div>
+    <div class="summary-row total"><span>Total<span class="cn-sub">合计</span></span><span class="amount" id="summaryTotal">$0.00</span></div>
+  </div>
+
+</div><!-- /checkout-right -->
+</div><!-- /checkout-layout -->
+
+<!-- ═══ PayPal SDK ═══ -->
+<!--
+  ************************************************************
+  *  PayPal Client ID — REPLACE WITH YOUR REAL CLIENT ID    *
+  *  Current: "sb" (sandbox, for testing only)              *
+  *  替换为真实 PayPal Client ID：                             *
+  *  - 沙箱测试用：sb（当前）                                   *
+  *  - 正式上线：替换为您的 PayPal Live Client ID               *
+  *  URL: https://developer.paypal.com/dashboard/applications *
+  ************************************************************
+-->
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════
+ *  PayPal Client ID — REPLACE FOR PRODUCTION
+ *  Replace "sb" with your real PayPal Sandbox/Live Client ID
+ *  上线前请替换为真实的 PayPal Client ID
+ * ═══════════════════════════════════════════════════════ */
+
+/* ═══ Constants ═══ */
+var CART_KEY = 'mgk_cart';
+var ORDERS_KEY = 'miracle_gk_orders';
+
+/* ═══ State ═══ */
+var cart = [];
+var shippingCost = 25;
+var shippingMethodName = 'Standard';
+var shippingMethodDesc = '15-30 business days';
+var currentStep = 1;
+
+/* ═══ Init ═══ */
+document.addEventListener('DOMContentLoaded', function() {
+  updateNavBadge();
+  loadCart();
+  renderOrderItems();
+  updateSummary();
+});
+
+/* ═══ Cart ═══ */
+function getCart() {
+  try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+  catch(e) { return []; }
+}
+
+function loadCart() { cart = getCart(); }
+
+function updateNavBadge() {
+  try {
+    var c = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    var count = c.reduce(function(s, i) { return s + (i.qty || 1); }, 0);
+    var badge = document.getElementById('navCartBadge');
+    if (badge) { badge.textContent = count; badge.classList.toggle('show', count > 0); }
+  } catch(e) {}
+}
+
+function renderOrderItems() {
+  var list = document.getElementById('orderItemsList');
+  var card = document.getElementById('orderItemsCard');
+
+  if (!cart.length) {
+    card.innerHTML = '<h2>Order Items<span class="cn-sub">订单商品</span></h2>'
+      + '<div class="empty-cart-msg">Your cart is empty.<br><span class="cn-sub">购物车为空</span><br><a href="products.html">Browse Products<span class="cn-sub">浏览商品</span></a></div>';
+    return;
+  }
+
+  list.innerHTML = cart.map(function(item) {
+    var itemTotal = ((item.price || 0) * (item.qty || 1)).toFixed(2);
+    return '<div class="order-item">' +
+      '<div class="order-item-img"><img src="' + (item.img || '') + '" alt="' + (item.name || '') + '" onerror="this.style.display=\'none\'"></div>' +
+      '<div class="order-item-info">' +
+        '<div class="order-item-name">' + (item.name || 'Item') + '</div>' +
+        '<div class="order-item-sku">SKU: ' + (item.sku || '\u2014') + '</div>' +
+        '<div class="order-item-qty">Qty: ' + (item.qty || 1) + '</div>' +
+      '</div>' +
+      '<div class="order-item-price">$' + itemTotal + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function getSubtotal() {
+  return cart.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1); }, 0);
+}
+
+function getTotal() {
+  var subtotal = getSubtotal();
+  var tax = subtotal * 0.08;
+  return subtotal + shippingCost + tax;
+}
+
+function updateSummary() {
+  var subtotal = getSubtotal();
+  var tax = subtotal * 0.08;
+  var total = subtotal + shippingCost + tax;
+  document.getElementById('summarySubtotal').textContent = '$' + subtotal.toFixed(2);
+  document.getElementById('summaryShipping').textContent = '$' + shippingCost.toFixed(2);
+  document.getElementById('summaryTax').textContent = '$' + tax.toFixed(2);
+  document.getElementById('summaryTotal').textContent = '$' + total.toFixed(2);
+}
+
+/* ═══ Shipping Method ═══ */
+function selectShipping(el, cost, name, desc) {
+  document.querySelectorAll('.shipping-method').forEach(function(m) { m.classList.remove('selected'); });
+  el.classList.add('selected');
+  shippingCost = cost;
+  shippingMethodName = name;
+  shippingMethodDesc = desc;
+  updateSummary();
+}
+
+/* ═══ Step Navigation ═══ */
+function goToStep(step) {
+  if (step === 2) {
+    if (!validateAllFields()) return;
+    populateShippingSummary();
+  }
+
+  currentStep = step;
+
+  document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('active'); });
+  var target = document.getElementById('panel-step' + step);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.step-indicator .step-item').forEach(function(el) {
+    var s = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done');
+    if (s < step) el.classList.add('done');
+    if (s === step) el.classList.add('active');
+  });
+
+  var line1 = document.getElementById('line1');
+  if (line1) line1.classList.toggle('done', step > 1);
+
+  var subtitles = {
+    1: 'Complete your purchase securely<span class="cn-sub">安全完成您的购买</span>',
+    2: 'Confirm and pay with PayPal<span class="cn-sub">确认并使用 PayPal 支付</span>',
+    3: 'Your order is confirmed<span class="cn-sub">您的订单已确认</span>'
+  };
+  var heroSub = document.getElementById('heroSubtitle');
+  if (heroSub) heroSub.innerHTML = subtitles[step] || '';
+
+  if (step === 2) {
+    // Ensure PayPal SDK is loaded before initializing
+    if (typeof paypal !== 'undefined') {
+      initPayPal();
+    } else {
+      // If SDK not loaded yet, wait and retry
+      var checkPayPal = setInterval(function() {
+        if (typeof paypal !== 'undefined') {
+          clearInterval(checkPayPal);
+          initPayPal();
+        }
+      }, 200);
+      // Fallback after 5 seconds
+      setTimeout(function() {
+        clearInterval(checkPayPal);
+        if (typeof paypal !== 'undefined') {
+          initPayPal();
+        } else {
+          var container = document.getElementById('paypal-button-container');
+          if (container) container.innerHTML = '<p style="color:#f59e0b;font-size:14px;">PayPal SDK not loaded. Please refresh the page.<br><span class="cn-sub">PayPal SDK 未加载，请刷新页面。</span></p>';
+        }
+      }, 5000);
+    }
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══ Populate Shipping Summary (Step 2) ═══ */
+function populateShippingSummary() {
+  var countrySel = document.getElementById('shipCountry');
+  var countryText = countrySel.options[countrySel.selectedIndex].text;
+  document.getElementById('payName').textContent = document.getElementById('shipName').value.trim();
+  document.getElementById('payEmail').textContent = document.getElementById('shipEmail').value.trim();
+  document.getElementById('payPhone').textContent = document.getElementById('shipPhone').value.trim();
+  document.getElementById('payAddress').textContent = document.getElementById('shipAddress').value.trim();
+  document.getElementById('payCityState').textContent =
+    document.getElementById('shipCity').value.trim() + ', ' + document.getElementById('shipState').value.trim();
+  document.getElementById('payZipCountry').textContent =
+    document.getElementById('shipZip').value.trim() + ' / ' + countryText;
+  document.getElementById('payShipMethod').textContent =
+    shippingMethodName + ' ($' + shippingCost + ') \u2014 ' + shippingMethodDesc;
+}
+
+/* ═══════════════════════════════════════════════════════
+ *  FORM VALIDATION — Strict client-side validation
+ *  Each field has its own validation rules.
+ * ═══════════════════════════════════════════════════════ */
+
+function clearAllErrors() {
+  document.querySelectorAll('.form-group.has-error').forEach(function(g) {
+    g.classList.remove('has-error');
+  });
+}
+
+function showError(fieldId, msg) {
+  var fg = document.getElementById('fg-' + fieldId);
+  var err = document.getElementById('err-' + fieldId);
+  if (fg) fg.classList.add('has-error');
+  if (err) err.textContent = msg;
+}
+
+function hideError(fieldId) {
+  var fg = document.getElementById('fg-' + fieldId);
+  if (fg) fg.classList.remove('has-error');
+}
+
+/* ── Individual validators ── */
+function validateName() {
+  var val = document.getElementById('shipName').value.trim();
+  if (!val) { showError('shipName', 'Full name is required.'); return false; }
+  if (val.length < 2) { showError('shipName', 'Name must be at least 2 characters.'); return false; }
+  if (val.length > 60) { showError('shipName', 'Name must be no more than 60 characters.'); return false; }
+  if (/^[0-9\s\-+()]+$/.test(val)) { showError('shipName', 'Name cannot be only numbers or symbols.'); return false; }
+  hideError('shipName');
+  return true;
+}
+
+function validateEmail() {
+  var val = document.getElementById('shipEmail').value.trim();
+  if (!val) { showError('shipEmail', 'Email address is required.'); return false; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { showError('shipEmail', 'Please enter a valid email address.'); return false; }
+  hideError('shipEmail');
+  return true;
+}
+
+function validatePhone() {
+  var val = document.getElementById('shipPhone').value.trim();
+  var digits = val.replace(/\D/g, '');
+  var country = document.getElementById('shipCountry').value;
+
+  if (!val) { showError('shipPhone', 'Phone number is required.'); return false; }
+
+  switch (country) {
+    case 'CN':
+      if (digits.length !== 11 || digits.charAt(0) !== '1') {
+        showError('shipPhone', 'China phone: 11 digits starting with 1 (e.g. 13812345678).');
+        return false;
+      }
+      break;
+    case 'US':
+    case 'CA':
+      if (digits.length !== 10) {
+        showError('shipPhone', 'US/Canada phone: 10 digits (e.g. 5551234567).');
+        return false;
+      }
+      break;
+    case 'MY':
+      if ((digits.length < 10 || digits.length > 11) || !digits.startsWith('01')) {
+        showError('shipPhone', 'Malaysia phone: 10-11 digits starting with 01.');
+        return false;
+      }
+      break;
+    case 'SG':
+    case 'HK':
+    case 'TW':
+      if (digits.length < 7 || digits.length > 15) {
+        showError('shipPhone', 'Phone: 7-15 digits required.');
+        return false;
+      }
+      break;
+    default:
+      if (digits.length < 7 || digits.length > 15) {
+        showError('shipPhone', 'Phone: 7-15 digits required.');
+        return false;
+      }
+      break;
+  }
+  hideError('shipPhone');
+  return true;
+}
+
+function validateAddress() {
+  var val = document.getElementById('shipAddress').value.trim();
+  if (!val) { showError('shipAddress', 'Street address is required.'); return false; }
+  if (val.length < 5) { showError('shipAddress', 'Address must be at least 5 characters.'); return false; }
+
+  // Must contain at least some letters, or digits + spaces (not pure gibberish like "aaaaaaa")
+  // At minimum it should look like a real address: letters+numbers
+  var hasLetters = /[a-zA-Z]/.test(val);
+  var hasNumbers = /\d/.test(val);
+  var hasSpaces = /\s/.test(val);
+  if (!hasLetters && !hasNumbers) {
+    showError('shipAddress', 'Please enter a valid street address (not random characters).');
+    return false;
+  }
+  hideError('shipAddress');
+  return true;
+}
+
+function validateCity() {
+  var val = document.getElementById('shipCity').value.trim();
+  if (!val) { showError('shipCity', 'City is required.'); return false; }
+  if (val.length < 2) { showError('shipCity', 'City must be at least 2 characters.'); return false; }
+  hideError('shipCity');
+  return true;
+}
+
+function validateState() {
+  var val = document.getElementById('shipState').value.trim();
+  if (!val) { showError('shipState', 'State/Province is required.'); return false; }
+  if (val.length < 2) { showError('shipState', 'State/Province must be at least 2 characters.'); return false; }
+  hideError('shipState');
+  return true;
+}
+
+function validateZip() {
+  var val = document.getElementById('shipZip').value.trim();
+  var country = document.getElementById('shipCountry').value;
+
+  if (!val) { showError('shipZip', 'ZIP/Postal code is required.'); return false; }
+
+  var digits = val.replace(/\D/g, '');
+  var alphanumeric = val.replace(/\s/g, '');
+
+  switch (country) {
+    case 'US':
+      if (digits.length !== 5 && digits.length !== 9) {
+        showError('shipZip', 'US ZIP: 5 digits (e.g. 10001) or 9 digits (e.g. 10001-0001).');
+        return false;
+      }
+      break;
+    case 'CN':
+      if (digits.length !== 6) {
+        showError('shipZip', 'China postal code: 6 digits (e.g. 100000).');
+        return false;
+      }
+      break;
+    case 'GB':
+      // UK: 5-7 characters, alphanumeric (e.g. SW1A 1AA)
+      if (alphanumeric.length < 5 || alphanumeric.length > 7) {
+        showError('shipZip', 'UK postcode: 5-7 characters (e.g. SW1A 1AA).');
+        return false;
+      }
+      break;
+    case 'CA':
+      // Canada: 6 characters, alphanumeric (e.g. K1A 0B1)
+      if (alphanumeric.length !== 6) {
+        showError('shipZip', 'Canada postal code: 6 characters (e.g. K1A 0B1).');
+        return false;
+      }
+      break;
+    case 'AU':
+    case 'NZ':
+      if (digits.length !== 4) {
+        showError('shipZip', 'Postal code: 4 digits required.');
+        return false;
+      }
+      break;
+    default:
+      if (alphanumeric.length < 2 || alphanumeric.length > 20) {
+        showError('shipZip', 'Please enter a valid postal code (2-20 characters).');
+        return false;
+      }
+      break;
+  }
+  hideError('shipZip');
+  return true;
+}
+
+function validateCountry() {
+  var val = document.getElementById('shipCountry').value;
+  if (!val) { showError('shipCountry', 'Please select a country.'); return false; }
+  hideError('shipCountry');
+  return true;
+}
+
+/* ── Real-time validation on blur ── */
+function bindBlurValidation() {
+  var fieldMap = {
+    shipName: validateName,
+    shipEmail: validateEmail,
+    shipPhone: validatePhone,
+    shipAddress: validateAddress,
+    shipCity: validateCity,
+    shipState: validateState,
+    shipZip: validateZip
+  };
+
+  Object.keys(fieldMap).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('blur', function() {
+      fieldMap[id]();
+    });
+    el.addEventListener('input', function() {
+      var fg = document.getElementById('fg-' + id);
+      if (fg && fg.classList.contains('has-error')) {
+        fieldMap[id]();
+      }
+    });
+  });
+
+  document.getElementById('shipCountry').addEventListener('change', function() {
+    validateCountry();
+    // Re-validate phone and zip when country changes
+    var phoneEl = document.getElementById('shipPhone');
+    var zipEl = document.getElementById('shipZip');
+    if (phoneEl && phoneEl.value.trim()) validatePhone();
+    if (zipEl && zipEl.value.trim()) validateZip();
+  });
+}
+
+/* ── Full form validation ── */
+function validateAllFields() {
+  clearAllErrors();
+  var results = [
+    validateName(),
+    validateEmail(),
+    validatePhone(),
+    validateAddress(),
+    validateCity(),
+    validateState(),
+    validateZip(),
+    validateCountry()
+  ];
+  return results.every(function(r) { return r; });
+}
+
+/* ═══ PayPal ═══ */
+function initPayPal() {
+  if (typeof paypal === 'undefined') {
+    var container = document.getElementById('paypal-button-container');
+    if (container) container.innerHTML = '<p style="color:#f59e0b;">PayPal SDK loading...<span class="cn-sub">PayPal SDK 加载中...</span></p>';
+    setTimeout(initPayPal, 2000);
+    return;
+  }
+
+  var container = document.getElementById('paypal-button-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  try {
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        var subtotal = getSubtotal();
+        var tax = subtotal * 0.08;
+        var total = (subtotal + shippingCost + tax).toFixed(2);
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: total,
+              currency_code: 'USD',
+              breakdown: {
+                item_total: { value: subtotal.toFixed(2), currency_code: 'USD' },
+                shipping: { value: shippingCost.toFixed(2), currency_code: 'USD' },
+                tax_total: { value: tax.toFixed(2), currency_code: 'USD' }
+              }
+            },
+            items: cart.map(function(i) {
+              return {
+                name: (i.name || 'Item').substring(0, 127),
+                sku: i.sku || 'N/A',
+                unit_amount: { value: parseFloat(i.price || 0).toFixed(2), currency_code: 'USD' },
+                quantity: (i.qty || 1).toString()
+              };
+            })
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          onPaymentSuccess(details);
+        });
+      },
+      onError: function(err) {
+        console.error('PayPal Error:', err);
+        alert('Payment failed. Please try again or use a different payment method.\n支付失败，请重试。');
+      }
+    }).render('#paypal-button-container');
+  } catch (err) {
+    console.error('PayPal Buttons render error:', err);
+    var container = document.getElementById('paypal-button-container');
+    if (container) container.innerHTML = '<p style="color:#f59e0b;font-size:14px;">PayPal button failed to load. Please refresh and try again.<br><span class="cn-sub">PayPal 按钮加载失败，请刷新重试。</span></p>';
+  }
+}
+
+/* ═══ Payment Success Handler ═══ */
+function onPaymentSuccess(paypalDetails) {
+  var subtotal = getSubtotal();
+  var tax = subtotal * 0.08;
+  var total = subtotal + shippingCost + tax;
+
+  var now = new Date();
+  var dateStr = now.getFullYear().toString()
+    + String(now.getMonth()+1).padStart(2,'0')
+    + String(now.getDate()).padStart(2,'0');
+  var randStr = Math.random().toString(36).substr(2,4).toUpperCase();
+  var orderId = 'MGK-' + dateStr + '-' + randStr;
+
+  var trackingId = 'TRK' + Date.now().toString().slice(-8) + Math.random().toString(36).substr(2,4).toUpperCase();
+
+  var etaDays = shippingCost === 25 ? 30 : shippingCost === 45 ? 15 : 7;
+  var etaDate = new Date(); etaDate.setDate(etaDate.getDate() + etaDays);
+  var etaStr = etaDate.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  var countrySel = document.getElementById('shipCountry');
+  var countryCode = countrySel.value;
+  var countryName = countrySel.options[countrySel.selectedIndex].text;
+
+  var shippingInfo = {
+    name: document.getElementById('shipName').value.trim(),
+    email: document.getElementById('shipEmail').value.trim(),
+    phone: document.getElementById('shipPhone').value.trim(),
+    address: document.getElementById('shipAddress').value.trim(),
+    city: document.getElementById('shipCity').value.trim(),
+    state: document.getElementById('shipState').value.trim(),
+    zip: document.getElementById('shipZip').value.trim(),
+    country: countryCode,
+    countryName: countryName,
+    method: shippingMethodName,
+    methodDesc: shippingMethodDesc,
+    shippingCost: shippingCost
+  };
+
+  var order = {
+    orderId: orderId,
+    trackingId: trackingId,
+    paymentMethod: 'PayPal',
+    paypalOrderId: (paypalDetails && paypalDetails.id) ? paypalDetails.id : '',
+    items: cart.map(function(i) {
+      return { name: i.name, price: i.price, sku: i.sku || '', qty: i.qty || 1, img: i.img || '' };
+    }),
+    subtotal: subtotal.toFixed(2),
+    shipping: shippingCost.toFixed(2),
+    tax: tax.toFixed(2),
+    total: total.toFixed(2),
+    shippingInfo: shippingInfo,
+    status: 'Payment Confirmed',
+    statusHistory: [
+      { status: 'Order Placed', time: new Date(Date.now() - 60000).toISOString() },
+      { status: 'Payment Confirmed', time: new Date().toISOString() }
+    ],
+    eta: etaStr,
+    createdAt: new Date().toISOString()
+  };
+
+  var orders = [];
+  try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; } catch(e) {}
+  orders.push(order);
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+
+  localStorage.setItem(CART_KEY, JSON.stringify([]));
+  cart = [];
+  updateNavBadge();
+  renderOrderItems();
+
+  populateConfirmation(order);
+  goToConfirmation();
+}
+
+/* ═══ Go to Confirmation (sets both steps as done) ═══ */
+function goToConfirmation() {
+  currentStep = 3;
+
+  document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('active'); });
+  var target = document.getElementById('panel-step3');
+  if (target) target.classList.add('active');
+
+  // Mark all step items as done
+  document.querySelectorAll('.step-indicator .step-item').forEach(function(el) {
+    el.classList.remove('active');
+    el.classList.add('done');
+  });
+
+  var line1 = document.getElementById('line1');
+  if (line1) line1.classList.add('done');
+
+  var heroSub = document.getElementById('heroSubtitle');
+  if (heroSub) heroSub.innerHTML = 'Your order is confirmed<span class="cn-sub">您的订单已确认</span>';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══ Populate Confirmation ═══ */
+function populateConfirmation(order) {
+  document.getElementById('confirmOrderId').textContent = order.orderId;
+  document.getElementById('confirmTrackingId').textContent = order.trackingId;
+  document.getElementById('confirmTotal').textContent = '$' + parseFloat(order.total).toFixed(2);
+  document.getElementById('confirmPaymentMethod').textContent = order.paymentMethod;
+  document.getElementById('confirmEta').textContent = order.eta;
+
+  var si = order.shippingInfo;
+  var addrStr = [si.name, si.address, si.city + ', ' + si.state + ' ' + si.zip, si.countryName].filter(Boolean).join(', ');
+  document.getElementById('confirmAddress').textContent = addrStr;
+
+  var itemsContainer = document.getElementById('confirmItems');
+  itemsContainer.innerHTML = (order.items || []).map(function(item) {
+    var itemTotal = (item.price * item.qty).toFixed(2);
+    return '<div class="confirm-row">' +
+      '<span class="label">' + item.name + ' \u00d7 ' + item.qty + '</span>' +
+      '<span class="value">$' + itemTotal + '</span>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('confirmTrackBtn').href = 'order-tracking.html?order=' + encodeURIComponent(order.orderId);
+}
+
+/* ═══ Bind blur validation events ═══ */
+bindBlurValidation();
+</script>
+
+</body>
+</html>

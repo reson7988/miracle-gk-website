@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRACLE GK — Order Tracking</title>
+<meta name="description" content="Track your MIRACLE GK resin model order. View shipping status and delivery estimate.">
+
+<style>
+/* ====== Reset & Base ====== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #000;
+  --bg-card: rgba(255,255,255,0.05);
+  --cyan: #00e0ff;
+  --purple: #a855f7;
+  --gold: #f59e0b;
+  --green: #22c55e;
+  --text: #f5f5f7;
+  --text-dim: #86868b;
+  --border: rgba(255,255,255,0.1);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', 'PingFang SC', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.47059;
+  font-weight: 400;
+  min-height: 100vh;
+}
+
+.cn-sub { display: block; font-size: 0.45em; color: #666; font-weight: 400; margin-top: 4px; letter-spacing: 0.05em; }
+
+/* ── Navigation ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 64px;
+  background: rgba(0,0,0,.85); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand { font-size: 22px; font-weight: 700; color: var(--cyan); letter-spacing: 1px; }
+.nav-brand span { color: var(--cyan); }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { color: #aaa; text-decoration: none; font-size: 14px; transition: color .2s; }
+.nav-links a:hover { color: var(--cyan); }
+.nav-cart-link {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  color: #aaa; text-decoration: none; font-size: 20px;
+  transition: color .2s; padding: 4px 8px;
+}
+.nav-cart-link:hover { color: var(--cyan); }
+.nav-cart-badge {
+  position: absolute; top: -4px; right: -6px;
+  background: var(--cyan); color: #000; font-size: 11px; font-weight: 700;
+  min-width: 18px; height: 18px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 5px; display: none;
+}
+.nav-cart-badge.show { display: flex; }
+
+/* ── Hero ── */
+.tracking-hero {
+  padding: 120px 20px 40px; margin-top: 64px; text-align: center;
+  background: linear-gradient(135deg, #000 0%, #0a1628 50%, #000 100%);
+  border-bottom: 1px solid var(--border);
+}
+.tracking-hero h1 { font-size: 32px; color: var(--cyan); margin-bottom: 8px; }
+.tracking-hero p { color: var(--text-dim); font-size: 15px; }
+
+/* ── Search Section ── */
+.search-section {
+  max-width: 640px; margin: -30px auto 0; padding: 0 20px; position: relative; z-index: 10;
+}
+.search-box {
+  display: flex; gap: 0; background: #111; border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,.4);
+}
+.search-box input {
+  flex: 1; padding: 18px 24px; background: transparent; border: none;
+  color: var(--text); font-size: 16px; font-family: inherit; outline: none;
+}
+.search-box input::placeholder { color: #555; }
+.search-box button {
+  padding: 0 28px; background: linear-gradient(135deg, #00e0ff 0%, #00b4d8 100%);
+  border: none; color: #000; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .2s; font-family: inherit;
+}
+.search-box button:hover { background: linear-gradient(135deg, #00f0ff 0%, #00c4e8 100%); }
+
+/* ── Result Section ── */
+.result-section {
+  max-width: 800px; margin: 40px auto; padding: 0 20px;
+  display: none;
+}
+.result-section.show { display: block; }
+
+/* ── Status Timeline ── */
+.status-timeline {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px; margin-bottom: 24px;
+}
+.status-timeline h2 { font-size: 18px; color: var(--cyan); margin-bottom: 24px; }
+.timeline { position: relative; padding-left: 36px; }
+.timeline::before {
+  content: ''; position: absolute; left: 10px; top: 8px; bottom: 8px;
+  width: 2px; background: rgba(255,255,255,.1);
+}
+.timeline-step {
+  position: relative; padding-bottom: 28px;
+}
+.timeline-step:last-child { padding-bottom: 0; }
+.timeline-dot {
+  position: absolute; left: -30px; top: 4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #555; background: #111;
+  transition: all .3s;
+}
+.timeline-step.active .timeline-dot {
+  border-color: var(--cyan); background: var(--cyan);
+  box-shadow: 0 0 12px rgba(0,224,255,.4);
+}
+.timeline-step.completed .timeline-dot {
+  border-color: var(--green); background: var(--green);
+}
+.timeline-step .step-label {
+  font-size: 15px; font-weight: 500; color: #555;
+  transition: color .3s;
+}
+.timeline-step.active .step-label { color: var(--cyan); }
+.timeline-step.completed .step-label { color: var(--green); }
+.timeline-step .step-time {
+  font-size: 12px; color: var(--text-dim); margin-top: 3px;
+}
+
+/* ── Logistics Info Card ── */
+.logistics-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.logistics-card h2 { font-size: 18px; color: var(--cyan); margin-bottom: 16px; }
+.logistics-row {
+  display: flex; justify-content: space-between; padding: 8px 0;
+  font-size: 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.logistics-row:last-child { border-bottom: none; }
+.logistics-row .label { color: var(--text-dim); }
+.logistics-row .value { color: var(--text); font-weight: 500; text-align: right; }
+.logistics-row .value.highlight { color: var(--cyan); }
+.logistics-row .value.green { color: var(--green); }
+.logistics-row .value.gold { color: var(--gold); }
+
+/* ── Order Info Cards ── */
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;
+}
+.info-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 22px;
+}
+.info-card h3 { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+.info-card p { font-size: 16px; color: var(--text); font-weight: 500; }
+.info-card .highlight { color: var(--cyan); font-size: 18px; font-weight: 700; }
+
+/* ── Order Items in Tracking ── */
+.order-items-track {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.order-items-track h2 { font-size: 18px; color: var(--cyan); margin-bottom: 20px; }
+.track-item {
+  display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.track-item:last-child { border-bottom: none; }
+.track-item-img { width: 56px; height: 56px; border-radius: 8px; overflow: hidden; background: #111; flex-shrink: 0; }
+.track-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.track-item-info { flex: 1; }
+.track-item-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.track-item-qty { font-size: 12px; color: var(--text-dim); }
+.track-item-price { font-size: 14px; color: var(--cyan); font-weight: 600; }
+
+/* ── Shipping Address ── */
+.shipping-addr-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px; margin-bottom: 24px;
+}
+.shipping-addr-card h2 { font-size: 18px; color: var(--cyan); margin-bottom: 16px; }
+.addr-line { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+
+/* ── Simulate Progress Button ── */
+.simulate-bar {
+  text-align: center; margin-bottom: 24px;
+}
+.simulate-bar button {
+  padding: 10px 24px; border-radius: 10px;
+  background: rgba(0,224,255,.1); border: 1px solid rgba(0,224,255,.25);
+  color: var(--cyan); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all .2s; font-family: inherit;
+}
+.simulate-bar button:hover { background: rgba(0,224,255,.2); }
+.simulate-bar button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── No Order Found ── */
+.no-order-found {
+  text-align: center; padding: 80px 20px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; margin-top: 30px;
+}
+.no-order-found .icon { font-size: 56px; margin-bottom: 20px; opacity: .3; }
+.no-order-found h3 { font-size: 20px; color: var(--text-dim); margin-bottom: 10px; }
+.no-order-found p { font-size: 14px; color: #555; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  nav { padding: 0 16px; height: 56px; }
+  .nav-brand { font-size: 18px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 12px; }
+  .tracking-hero { padding: 100px 16px 30px; }
+  .tracking-hero h1 { font-size: 26px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .search-box input { padding: 14px 18px; font-size: 14px; }
+  .search-box button { padding: 0 20px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Navigation ═══ -->
+<nav>
+  <div class="nav-brand">MIRACLE<span style="color:#00e0ff;">GK</span></div>
+  <div class="nav-links">
+    <a href="index.html">Home<span class="cn-sub">首页</span></a>
+    <a href="products.html">Products<span class="cn-sub">产品分类</span></a>
+    <a href="craft.html">Craft<span class="cn-sub">工艺展示</span></a>
+    <a href="custom.html">License<span class="cn-sub">合作授权</span></a>
+    <a href="index.html#footer-contact">Contact<span class="cn-sub">联系我们</span></a>
+    <a href="checkout.html" class="nav-cart-link" title="Cart / 购物车">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="nav-cart-badge" id="navCartBadge">0</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ Hero ═══ -->
+<section class="tracking-hero">
+  <h1>Order Tracking<span class="cn-sub">物流查询</span></h1>
+  <p>Enter your Order ID to track your shipment<span class="cn-sub">输入订单号查询物流状态</span></p>
+</section>
+
+<!-- ═══ Search ═══ -->
+<div class="search-section">
+  <div class="search-box">
+    <input type="text" id="orderSearchInput" placeholder="Enter Order ID, e.g. MGK-20250527-XXXX" onkeydown="if(event.key==='Enter')searchOrder()">
+    <button onclick="searchOrder()">Track<span class="cn-sub">查询</span></button>
+  </div>
+</div>
+
+<!-- ═══ Result: No Order ═══ -->
+<div class="no-order-found" id="noOrderFound" style="display:none;">
+  <div class="icon">&#128230;</div>
+  <h3>No Order Found<span class="cn-sub">未找到订单</span></h3>
+  <p>Please check your Order ID and try again.<span class="cn-sub">请检查订单号后重试。</span></p>
+  <p style="margin-top:12px;font-size:13px;color:#444;">Tip: After payment, you can find your Order ID on the confirmation page.<span class="cn-sub">提示：支付成功后，确认页面会显示您的订单号。</span></p>
+</div>
+
+<!-- ═══ Result: Order Found ═══ -->
+<div class="result-section" id="resultSection">
+
+  <!-- Status Timeline -->
+  <div class="status-timeline">
+    <h2>Order Status<span class="cn-sub">订单状态</span></h2>
+    <div class="timeline" id="statusTimeline">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- Simulate Progress -->
+  <div class="simulate-bar" id="simulateBar">
+    <button onclick="advanceStatus()" id="advanceBtn">Simulate Next Status<span class="cn-sub">模拟推进状态</span> &#8594;</button>
+  </div>
+
+  <!-- Logistics Info -->
+  <div class="logistics-card" id="logisticsCard">
+    <h2>Logistics Info<span class="cn-sub">物流信息</span></h2>
+    <div class="logistics-row">
+      <span class="label">Carrier<span class="cn-sub">承运商</span></span>
+      <span class="value" id="logCarrier">—</span>
+    </div>
+    <div class="logistics-row">
+      <span class="label">Tracking Number<span class="cn-sub">运单号</span></span>
+      <span class="value highlight" id="logTrackingId">—</span>
+    </div>
+    <div class="logistics-row">
+      <span class="label">Ship From<span class="cn-sub">发货地</span></span>
+      <span class="value" id="logOrigin">—</span>
+    </div>
+    <div class="logistics-row">
+      <span class="label">Destination<span class="cn-sub">目的地</span></span>
+      <span class="value" id="logDestination">—</span>
+    </div>
+    <div class="logistics-row">
+      <span class="label">Estimated Delivery<span class="cn-sub">预计送达</span></span>
+      <span class="value gold" id="logEta">—</span>
+    </div>
+    <div class="logistics-row">
+      <span class="label">Last Update<span class="cn-sub">最近更新</span></span>
+      <span class="value" id="logLastUpdate">—</span>
+    </div>
+  </div>
+
+  <!-- Info Grid -->
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Order ID<span class="cn-sub">订单号</span></h3>
+      <p id="infoOrderId">—</p>
+    </div>
+    <div class="info-card">
+      <h3>Payment Method<span class="cn-sub">支付方式</span></h3>
+      <p id="infoPaymentMethod">—</p>
+    </div>
+    <div class="info-card">
+      <h3>Total Amount<span class="cn-sub">订单金额</span></h3>
+      <p class="highlight" id="infoTotal">—</p>
+    </div>
+    <div class="info-card">
+      <h3>Order Date<span class="cn-sub">下单日期</span></h3>
+      <p id="infoOrderDate">—</p>
+    </div>
+  </div>
+
+  <!-- Order Items -->
+  <div class="order-items-track" id="orderItemsTrack">
+    <h2>Items<span class="cn-sub">商品清单</span></h2>
+    <div id="trackItemsList"></div>
+  </div>
+
+  <!-- Shipping Address -->
+  <div class="shipping-addr-card" id="shippingAddrCard">
+    <h2>Shipping Address<span class="cn-sub">配送地址</span></h2>
+    <div class="addr-line" id="shippingAddrText"></div>
+  </div>
+
+</div><!-- /result-section -->
+
+<script>
+var ORDERS_KEY = 'miracle_gk_orders';
+var STATUS_FLOWS = ['Order Placed', 'Payment Confirmed', 'Processing', 'Shipped', 'In Transit', 'Delivered'];
+
+var CARRIERS = ['DHL Express', 'FedEx International', 'UPS Worldwide', 'EMS', 'SF Express International'];
+var ORIGINS = {
+  'CN': 'Dongguan, China',
+  'MY': 'Kuala Lumpur, Malaysia',
+  'US': 'Los Angeles, USA',
+  'UK': 'London, UK',
+  'DE': 'Frankfurt, Germany',
+  'JP': 'Tokyo, Japan',
+  'OTHER': 'Dongguan, China'
+};
+
+function updateNavBadge() {
+  try {
+    var cart = JSON.parse(localStorage.getItem('mgk_cart')) || [];
+    var count = cart.reduce(function(s, i) { return s + (i.qty || 1); }, 0);
+    var badge = document.getElementById('navCartBadge');
+    if (badge) { badge.textContent = count; badge.classList.toggle('show', count > 0); }
+  } catch(e) {}
+}
+
+function searchOrder() {
+  var input = document.getElementById('orderSearchInput').value.trim();
+  if (!input) return;
+
+  var orders = [];
+  try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; } catch(e) {}
+
+  var order = orders.find(function(o) { return o.orderId === input || o.trackingId === input; });
+
+  if (!order) {
+    document.getElementById('resultSection').classList.remove('show');
+    document.getElementById('noOrderFound').style.display = '';
+    return;
+  }
+
+  document.getElementById('noOrderFound').style.display = 'none';
+  document.getElementById('resultSection').classList.add('show');
+
+  // Fill info
+  document.getElementById('infoOrderId').textContent = order.orderId;
+  document.getElementById('infoPaymentMethod').textContent = order.paymentMethod || '—';
+  var total = parseFloat(order.total || 0);
+  document.getElementById('infoTotal').textContent = '$' + total.toFixed(2);
+
+  var orderDate = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
+  document.getElementById('infoOrderDate').textContent = orderDate;
+
+  // Render timeline
+  renderTimeline(order);
+
+  // Render logistics
+  renderLogistics(order);
+
+  // Render items
+  renderItems(order);
+
+  // Render shipping address
+  renderShippingAddr(order);
+}
+
+function renderTimeline(order) {
+  var currentStatus = order.status || 'Order Placed';
+  var currentIdx = STATUS_FLOWS.indexOf(currentStatus);
+  if (currentIdx < 0) currentIdx = 0;
+
+  var timeline = document.getElementById('statusTimeline');
+  timeline.innerHTML = STATUS_FLOWS.map(function(status, idx) {
+    var cls = '';
+    if (idx < currentIdx || (idx === currentIdx && status === 'Delivered')) cls = 'completed';
+    else if (idx === currentIdx) cls = 'active';
+
+    var timeStr = '';
+    if (order.statusHistory) {
+      var entry = order.statusHistory.find(function(h) { return h.status === status; });
+      if (entry) {
+        var d = new Date(entry.time);
+        timeStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      }
+    }
+
+    return '<div class="timeline-step ' + cls + '">' +
+      '<div class="timeline-dot"></div>' +
+      '<div class="step-label">' + status + '<span class="cn-sub">' + getStatusCn(status) + '</span></div>' +
+      '<div class="step-time">' + timeStr + '</div>' +
+    '</div>';
+  }).join('');
+
+  // Update advance button
+  var advanceBtn = document.getElementById('advanceBtn');
+  if (advanceBtn) {
+    advanceBtn.disabled = (currentStatus === 'Delivered');
+    advanceBtn.textContent = currentStatus === 'Delivered' ? 'Delivered \u2713' : 'Simulate Next Status \u2192';
+  }
+}
+
+function renderLogistics(order) {
+  var si = order.shippingInfo || {};
+  var country = si.country || 'CN';
+  var carrier = order.carrier || CARRIERS[Math.abs(hashStr(order.orderId)) % CARRIERS.length];
+  var origin = ORIGINS[country] || ORIGINS['OTHER'];
+
+  // Auto-assign carrier if not set
+  if (!order.carrier) {
+    order.carrier = carrier;
+    saveOrders();
+  }
+
+  document.getElementById('logCarrier').textContent = carrier;
+  document.getElementById('logTrackingId').textContent = order.trackingId || '—';
+  document.getElementById('logOrigin').textContent = origin;
+
+  var destParts = [si.city, si.state, si.country].filter(Boolean);
+  document.getElementById('logDestination').textContent = destParts.join(', ') || '—';
+
+  document.getElementById('logEta').textContent = order.eta || '—';
+
+  var lastUpdate = order.statusHistory && order.statusHistory.length > 0
+    ? new Date(order.statusHistory[order.statusHistory.length - 1].time).toLocaleString('en-US')
+    : '—';
+  document.getElementById('logLastUpdate').textContent = lastUpdate;
+}
+
+function renderItems(order) {
+  var itemsList = document.getElementById('trackItemsList');
+  var items = order.items || [];
+  itemsList.innerHTML = items.map(function(item) {
+    var img = item.img || item.imgSrc || '';
+    return '<div class="track-item">' +
+      '<div class="track-item-img"><img src="' + img + '" alt="' + (item.name || '') + '"></div>' +
+      '<div class="track-item-info">' +
+        '<div class="track-item-name">' + (item.name || '') + '</div>' +
+        '<div class="track-item-qty">Qty: ' + (item.qty || 1) + '</div>' +
+      '</div>' +
+      '<div class="track-item-price">$' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderShippingAddr(order) {
+  var si = order.shippingInfo || {};
+  var parts = [si.name, si.address, si.city + ', ' + si.state + ' ' + si.zip, si.country].filter(Boolean);
+  document.getElementById('shippingAddrText').innerHTML = parts.map(function(l) { return '<div>' + l + '</div>'; }).join('');
+}
+
+function advanceStatus() {
+  var input = document.getElementById('orderSearchInput').value.trim();
+  if (!input) return;
+
+  var orders = [];
+  try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; } catch(e) {}
+
+  var idx = orders.findIndex(function(o) { return o.orderId === input || o.trackingId === input; });
+  if (idx < 0) return;
+
+  var order = orders[idx];
+  var currentStatus = order.status || 'Order Placed';
+  var currentIdx = STATUS_FLOWS.indexOf(currentStatus);
+
+  if (currentIdx >= STATUS_FLOWS.length - 1) return;  // already delivered
+
+  var nextStatus = STATUS_FLOWS[currentIdx + 1];
+  order.status = nextStatus;
+
+  if (!order.statusHistory) order.statusHistory = [];
+  order.statusHistory.push({ status: nextStatus, time: new Date().toISOString() });
+
+  // Update ETA for 'Shipped' status
+  if (nextStatus === 'Shipped') {
+    var sc = (order.shippingInfo && order.shippingInfo.shippingCost) || 25;
+    var etaDays = sc === 60 ? 7 : sc === 45 ? 15 : 30;
+    var etaDate = new Date(); etaDate.setDate(etaDate.getDate() + etaDays);
+    order.eta = etaDate.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+
+  orders[idx] = order;
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+
+  renderTimeline(order);
+  renderLogistics(order);
+}
+
+function saveOrders() {
+  var orders = [];
+  try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; } catch(e) {}
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+}
+
+function hashStr(str) {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    var char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function getStatusCn(status) {
+  var map = {
+    'Order Placed': '已下单',
+    'Payment Confirmed': '支付确认',
+    'Processing': '处理中',
+    'Shipped': '已发货',
+    'In Transit': '运输中',
+    'Delivered': '已送达'
+  };
+  return map[status] || status;
+}
+
+// Auto-search from URL param
+document.addEventListener('DOMContentLoaded', function() {
+  updateNavBadge();
+  var params = new URLSearchParams(window.location.search);
+  var orderId = params.get('order');
+  if (orderId) {
+    document.getElementById('orderSearchInput').value = orderId;
+    searchOrder();
+  }
+});
+</script>
+
+</body>
+</html>
